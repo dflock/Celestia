@@ -3,7 +3,7 @@ const float degree_per_px = 0.05;
 const float br_limit = 1.0 / (255.0 * 12.92);
 
 varying vec3 v_color; // 12
-varying vec3 v_max_tetha_hk; // 24
+varying vec3 v_tetha_k; // 24
 varying float pointSize; // 28
 
 uniform vec2 viewportSize;
@@ -23,16 +23,16 @@ void main(void)
     if (check == 0.0)
     {
         pointSize = 1.0;
-        v_max_tetha_hk = vec3(-1.0);
+        v_tetha_k = vec3(-1.0);
     }
     else
     {
-        float max_theta = 0.33435822702992773 * sqrt(max(color0.r, max(color0.g, color0.b))); // glare radius
-        pointSize =  2.0 * ceil(max_theta / degree_per_px);
-
-        float h = 0.0082234880783653 * pow(max_theta, 0.7369983254906639); // h, k, b - common constants, depending originally on star brightness
-        float k = 38581.577272697796 * pow(max_theta, 2.368787717957141);
-        v_max_tetha_hk = vec3(max_theta, h, k);
+        float max_br = sqrt(max(color0.r, max(color0.g, color0.b)));
+        float max_theta = 0.33435822702992773 * sqrt(max_br); // glare radius
+        float k = 3.3e-5 * pow(max_theta, -2.5); // common constant, depending originally on star brightness
+        float min_theta = max_theta / (pow(k, -0.5) + 1.0);
+        pointSize = floor(max_theta / (sqrt(0.5 * br_limit / (k * max_br)) + 1.0) / degree_per_px);
+        v_tetha_k = vec3(max_theta, min_theta, k);
     }
 
     gl_PointSize = pointSize;
