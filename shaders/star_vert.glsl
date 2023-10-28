@@ -28,7 +28,7 @@ void main(void)
     else
     {
         float max_br = sqrt(max(color0.r, max(color0.g, color0.b)));
-        float max_theta = 0.33435822702992773 * 0.2 * sqrt(max_br); // glare radius
+        float max_theta = 0.2 * sqrt(max_br); // glare radius
         float k = 3.3e-5 * pow(max_theta, -2.5); // common constant, depending originally on star brightness
         float min_theta = max_theta / (pow(k, -0.5) + 1.0);
         pointSize = floor(max_theta / (sqrt(0.5 * br_limit / (k * max_br)) + 1.0) / degree_per_px);
